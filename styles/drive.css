@@ -1,0 +1,143 @@
+.drive-page {
+  width: 100%;
+  max-width: 1080px;
+  border: 2px solid var(--accent);
+  background: rgba(5, 5, 5, 0.9);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.drive-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.drive-breadcrumbs {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.crumb-sep {
+  margin: 0 0.25rem;
+  color: var(--muted);
+}
+
+.drive-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.drive-loading,
+.drive-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--accent);
+  margin-top: 0.5rem;
+}
+
+.drive-list {
+  margin-top: 0.5rem;
+  border: 1px solid var(--accent);
+}
+
+.drive-row {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.18);
+  gap: 0.5rem;
+}
+
+.drive-row:last-child {
+  border-bottom: none;
+}
+
+.drive-row-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.drive-icon {
+  width: 18px;
+  height: 14px;
+  border: 2px solid var(--accent);
+}
+
+.drive-icon-folder {
+  border-radius: 0;
+}
+
+.drive-icon-file {
+  border-radius: 0;
+  border-style: dashed;
+}
+
+.drive-name {
+  font-size: 0.9rem;
+}
+
+.drive-size {
+  width: 80px;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.drive-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.drive-actions button {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.shared-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.shared-card {
+  background: var(--bg-elevated);
+  border: 2px solid var(--accent);
+  padding: 1.5rem;
+  max-width: 420px;
+  box-shadow: var(--shadow);
+}
+
+.shared-meta {
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+
+.shared-meta .label {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+}
