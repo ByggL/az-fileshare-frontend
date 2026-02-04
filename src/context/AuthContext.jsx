@@ -1,11 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { loginUser, registerUser } from '../api/auth.js';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { loginUser, registerUser } from "../api/auth.js";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => window.localStorage.getItem('azfs_token'));
+  const [token, setToken] = useState(() =>
+    window.localStorage.getItem("azfs_token"),
+  );
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -17,8 +19,8 @@ export function AuthProvider({ children }) {
       const data = await loginUser(creds);
       const newToken = data.token;
       setToken(newToken);
-      window.localStorage.setItem('azfs_token', newToken);
-      navigate('/');
+      window.localStorage.setItem("azfs_token", newToken);
+      navigate("/");
     } finally {
       setLoading(false);
     }
@@ -36,8 +38,8 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     setToken(null);
-    window.localStorage.removeItem('azfs_token');
-    navigate('/login');
+    window.localStorage.removeItem("azfs_token");
+    navigate("/login");
   };
 
   useEffect(() => {
