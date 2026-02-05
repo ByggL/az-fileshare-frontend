@@ -21,6 +21,8 @@ export function AuthProvider({ children }) {
       setToken(newToken);
       window.localStorage.setItem("azfs_token", newToken);
       navigate("/");
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
