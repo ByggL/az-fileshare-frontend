@@ -1,9 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import AuthCard from "../components/auth/AuthCard.jsx";
 import LoginForm from "../components/auth/LoginForm.jsx";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
 
 export default function LoginPage() {
   const { isAuthenticated } = useAuth();
