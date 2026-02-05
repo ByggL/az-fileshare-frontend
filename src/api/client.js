@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: "http://fileshare-backend-ehascrbabfaqerfg.norwayeast-01.azurewebsites.net:3000/api",
 });
 
 api.interceptors.request.use((config) => {
