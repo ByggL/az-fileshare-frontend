@@ -31,6 +31,7 @@ export default function DrivePage() {
     setLoading(true);
     try {
       const fetchedData = await listItems(parentId);
+      console.log(fetchedData);
       const data = Array.isArray(fetchedData) ? fetchedData : [];
 
       data.map((item) => {
