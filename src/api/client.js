@@ -1,7 +1,8 @@
 import axios from "axios";
+require("dotenv").config();
 
 const api = axios.create({
-  baseURL: "http://fileshare-backend-ehascrbabfaqerfg.norwayeast-01.azurewebsites.net:3000/api",
+  baseURL: process.env.API_URL,
 });
 
 api.interceptors.request.use((config) => {
