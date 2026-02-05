@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   listItems,
   uploadFile,
@@ -6,15 +6,16 @@ import {
   deleteItem,
   patchItem,
   shareItem,
-  getFileDownloadUrl
-} from '../api/drive.js';
-import DriveToolbar from '../components/drive/DriveToolbar.jsx';
-import Breadcrumbs from '../components/drive/Breadcrumbs.jsx';
-import FileList from '../components/drive/FileList.jsx';
-import NewFolderForm from '../components/drive/NewFolderForm.jsx';
-import RenameMoveModal from '../components/drive/RenameMoveModal.jsx';
-import ShareModal from '../components/drive/ShareModal.jsx';
-import ConfirmDialog from '../components/drive/ConfirmDialog.jsx';
+  getFileDownloadUrl,
+  downloadFile,
+} from "../api/drive.js";
+import DriveToolbar from "../components/drive/DriveToolbar.jsx";
+import Breadcrumbs from "../components/drive/Breadcrumbs.jsx";
+import FileList from "../components/drive/FileList.jsx";
+import NewFolderForm from "../components/drive/NewFolderForm.jsx";
+import RenameMoveModal from "../components/drive/RenameMoveModal.jsx";
+import ShareModal from "../components/drive/ShareModal.jsx";
+import ConfirmDialog from "../components/drive/ConfirmDialog.jsx";
 
 export default function DrivePage() {
   const [currentParentId, setCurrentParentId] = useState(null);
@@ -23,7 +24,7 @@ export default function DrivePage() {
   const [loading, setLoading] = useState(true);
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [renameItem, setRenameItem] = useState(null);
-  const [shareUrl, setShareUrl] = useState('');
+  const [shareUrl, setShareUrl] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
   const uploadInputRef = useRef(null);
 
@@ -31,6 +32,12 @@ export default function DrivePage() {
     setLoading(true);
     try {
       const data = await listItems(parentId);
+
+      data.map((item) => {
+        if (item.type == "folder") return (item.isFolder = true);
+        else return (item.isFolder = false);
+      });
+
       setItems(data || []);
     } finally {
       setLoading(false);
@@ -81,16 +88,16 @@ export default function DrivePage() {
 
   const handleShare = async (item) => {
     const data = await shareItem(item.id);
-    const token = data.token || data.shareToken || data.id || '';
+    const token = data.token || data.shareToken || data.id || "";
     const origin = window.location.origin;
     const url = `${origin}/share/${token}`;
     setShareUrl(url);
   };
 
-  const handleDownload = (item) => {
+  const handleDownload = async (item) => {
+    console.log(item.isFolder, item.id);
     if (item.isFolder) return;
-    const url = getFileDownloadUrl(item.id);
-    window.open(url, '_blank');
+    await downloadFile(item.id);
   };
 
   return (
@@ -112,7 +119,7 @@ export default function DrivePage() {
         onChange={(e) => {
           const files = Array.from(e.target.files || []);
           if (files.length) handleFilesSelected(files);
-          e.target.value = '';
+          e.target.value = "";
         }}
       />
 
@@ -128,17 +135,11 @@ export default function DrivePage() {
         />
       )}
 
-      {showNewFolder && (
-        <NewFolderForm onCreate={handleNewFolder} onCancel={() => setShowNewFolder(false)} />
-      )}
+      {showNewFolder && <NewFolderForm onCreate={handleNewFolder} onCancel={() => setShowNewFolder(false)} />}
       {renameItem && (
-        <RenameMoveModal
-          item={renameItem}
-          onSubmit={handleRenameMove}
-          onCancel={() => setRenameItem(null)}
-        />
+        <RenameMoveModal item={renameItem} onSubmit={handleRenameMove} onCancel={() => setRenameItem(null)} />
       )}
-      {shareUrl && <ShareModal url={shareUrl} onClose={() => setShareUrl('')} />}
+      {shareUrl && <ShareModal url={shareUrl} onClose={() => setShareUrl("")} />}
       {confirmDelete && (
         <ConfirmDialog
           message={`Supprimer "${confirmDelete.name}" ?`}

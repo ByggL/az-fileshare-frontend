@@ -1,7 +1,7 @@
 import api from "./client";
 
 export async function registerUser({ email, password }) {
-  const res = await api.post("/auth/register", { email, password });
+  const res = await api.post("/auth/register", { username: email, password });
   return res.data;
 }
 
