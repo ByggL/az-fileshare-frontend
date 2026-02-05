@@ -27,11 +27,11 @@ export default function DrivePage() {
   const [shareUrl, setShareUrl] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
   const uploadInputRef = useRef(null);
-  console.log("bonsoir");
   const refresh = async (parentId = currentParentId) => {
     setLoading(true);
     try {
-      const data = await listItems(parentId);
+      const fetchedData = await listItems(parentId);
+      const data = Array.isArray(fetchedData) ? fetchedData : [];
 
       data.map((item) => {
         if (item.type == "folder") return (item.isFolder = true);
@@ -39,6 +39,9 @@ export default function DrivePage() {
       });
 
       setItems(data || []);
+    } catch (error) {
+      console.error("Erreur chargement drive:", error);
+      setItems([]);
     } finally {
       setLoading(false);
     }
