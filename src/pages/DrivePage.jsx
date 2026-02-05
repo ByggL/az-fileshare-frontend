@@ -27,7 +27,7 @@ export default function DrivePage() {
   const [shareUrl, setShareUrl] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
   const uploadInputRef = useRef(null);
-
+  console.log("bonsoir");
   const refresh = async (parentId = currentParentId) => {
     setLoading(true);
     try {
@@ -128,18 +128,31 @@ export default function DrivePage() {
       ) : (
         <FileList
           items={items}
-          onOpenFolder={(item) => (item.isFolder ? openFolder(item) : handleDownload(item))}
+          onOpenFolder={(item) =>
+            item.isFolder ? openFolder(item) : handleDownload(item)
+          }
           onRenameMove={(item) => setRenameItem(item)}
           onShare={handleShare}
           onDelete={(item) => setConfirmDelete(item)}
         />
       )}
 
-      {showNewFolder && <NewFolderForm onCreate={handleNewFolder} onCancel={() => setShowNewFolder(false)} />}
-      {renameItem && (
-        <RenameMoveModal item={renameItem} onSubmit={handleRenameMove} onCancel={() => setRenameItem(null)} />
+      {showNewFolder && (
+        <NewFolderForm
+          onCreate={handleNewFolder}
+          onCancel={() => setShowNewFolder(false)}
+        />
       )}
-      {shareUrl && <ShareModal url={shareUrl} onClose={() => setShareUrl("")} />}
+      {renameItem && (
+        <RenameMoveModal
+          item={renameItem}
+          onSubmit={handleRenameMove}
+          onCancel={() => setRenameItem(null)}
+        />
+      )}
+      {shareUrl && (
+        <ShareModal url={shareUrl} onClose={() => setShareUrl("")} />
+      )}
       {confirmDelete && (
         <ConfirmDialog
           message={`Supprimer "${confirmDelete.name}" ?`}
