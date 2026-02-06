@@ -3,8 +3,8 @@
 // Change these values to deploy to a different environment
 // =========================================================
 
-@description('The name of the Web App (must be globally unique)')
-param webAppName string = 'fileshare-backend'
+@description('The name of the Frontend Web App (must be globally unique)')
+param webAppName string = 'fileshare-frontend'
 
 @description('The Resource ID of the App Service Plan (Server Farm)')
 param appServicePlanId string
@@ -15,7 +15,13 @@ param location string = resourceGroup().location
 @description('The Linux Runtime stack (e.g., NODE|24-lts)')
 param linuxFxVersion string = 'NODE|24-lts'
 
-// This constructs the full default hostname based on the app name
+@description('The startup command to run (e.g., API URL injection)')
+param startupCommand string = 'sed -i "s|__API_URL_PLACEHOLDER__|$API_URL|g" /home/site/wwwroot/dist/index.html && pm2 serve /home/site/wwwroot/dist --no-daemon --spa'
+
+@description('The Verification ID for custom domains')
+param customDomainVerificationId string = '49668FD8DFF41E622C5C14D52AC5619D6A40E456CB3A06E59DE518E38B3939DD'
+
+// Internal variables for cleaner hostname logic
 var defaultHostName = '${webAppName}.azurewebsites.net'
 var scmHostName = '${webAppName}.scm.azurewebsites.net'
 
@@ -27,11 +33,11 @@ resource webAppResource 'Microsoft.Web/sites@2024-11-01' = {
   name: webAppName
   location: location
   kind: 'app,linux'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     enabled: true
-    // hostNameSslStates is technically read-only for default hostnames, 
-    // but kept here to preserve structure as requested. 
-    // Using variables to make it dynamic.
     hostNameSslStates: [
       {
         name: defaultHostName
@@ -90,7 +96,7 @@ resource webAppFtp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2024-
   name: 'ftp'
   location: location
   properties: {
-    allow: true
+    allow: false
   }
 }
 
@@ -99,7 +105,7 @@ resource webAppScm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2024-
   name: 'scm'
   location: location
   properties: {
-    allow: true
+    allow: false
   }
 }
 
@@ -128,12 +134,14 @@ resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
     acrUseManagedIdentityCreds: false
     logsDirectorySizeLimit: 35
     detailedErrorLoggingEnabled: false
-    // Publishing username dynamically generated based on app name
+    // Dynamic publishing username
     publishingUsername: '$${webAppName}'
     scmType: 'GitHubAction'
     use32BitWorkerProcess: true
     webSocketsEnabled: false
     alwaysOn: false
+    // Using the parameter for the startup command
+    appCommandLine: startupCommand
     managedPipelineMode: 'Integrated'
     virtualApplications: [
       {
@@ -151,6 +159,7 @@ resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
     vnetPrivatePortsCount: 0
     publicNetworkAccess: 'Enabled'
     localMySqlEnabled: false
+    managedServiceIdentityId: 556
     ipSecurityRestrictions: [
       {
         ipAddress: 'Any'
@@ -182,6 +191,7 @@ resource webAppConfig 'Microsoft.Web/sites/config@2024-11-01' = {
     http20ProxyFlag: 0
   }
 }
+
 
 
 resource webAppHostBinding 'Microsoft.Web/sites/hostNameBindings@2024-11-01' = {
