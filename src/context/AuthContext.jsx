@@ -23,7 +23,6 @@ export function AuthProvider({ children }) {
       console.log(window.APP_CONFIG?.API_URL);
       const token = window.localStorage.getItem("azfs_token");
       console.log(token);
-      console.log(res);
       navigate("/");
     } catch (error) {
       console.error(error);
