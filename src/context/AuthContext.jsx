@@ -23,9 +23,14 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const data = await loginUser(creds);
-      handleAuthSuccess(data.token);
+      if (data && data.token) {
+        handleAuthSuccess(data.token);
+      } else {
+        throw new Error("Invalid credentials");
+      }
     } catch (error) {
       console.error(error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -38,6 +43,7 @@ export function AuthProvider({ children }) {
       handleAuthSuccess(data.token);
     } catch (error) {
       console.error(error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -47,7 +53,11 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       await registerUser(form);
+      // login user after registration
       await login(form);
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error; // throw to let component handle error UI
     } finally {
       setLoading(false);
     }
