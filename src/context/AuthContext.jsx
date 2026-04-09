@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { loginUser, registerUser } from "../api/auth.js";
+import { loginUser, registerUser, googleLogin } from "../api/auth.js";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
@@ -13,17 +13,29 @@ export function AuthProvider({ children }) {
 
   const isAuthenticated = !!token;
 
+  const handleAuthSuccess = (newToken) => {
+    setToken(newToken);
+    window.localStorage.setItem("azfs_token", newToken);
+    navigate("/");
+  };
+
   const login = async (creds) => {
     setLoading(true);
     try {
       const data = await loginUser(creds);
-      const newToken = data.token;
-      setToken(newToken);
-      window.localStorage.setItem("azfs_token", newToken);
-      console.log(window.APP_CONFIG?.API_URL);
-      const token = window.localStorage.getItem("azfs_token");
-      console.log(token);
-      navigate("/");
+      handleAuthSuccess(data.token);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (googleToken) => {
+    setLoading(true);
+    try {
+      const data = await googleLogin(googleToken);
+      handleAuthSuccess(data.token);
     } catch (error) {
       console.error(error);
     } finally {
@@ -51,7 +63,7 @@ export function AuthProvider({ children }) {
     // placeholder pour future vérification de token
   }, []);
 
-  const value = { token, isAuthenticated, loading, login, register, logout };
+  const value = { token, isAuthenticated, loading, login, loginWithGoogle, register, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

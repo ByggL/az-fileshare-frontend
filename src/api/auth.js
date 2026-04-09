@@ -14,3 +14,8 @@ export async function loginUser({ email, password }) {
     console.error(error);
   }
 }
+
+export async function googleLogin(token) {
+  const res = await api.post("/auth/google", { token });
+  return res.data;
+}
